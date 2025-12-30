@@ -1,6 +1,6 @@
 # Discord Self-Bot (Voice)
 
-[![Stars](https://img.shields.io/github/stars/luhnox/Discord-SelfBot-Voice?style=flat&logo=github)](https://github.com/luhnox/Discord-SelfBot-Voice/stargazers) [![Watchers](https://img.shields.io/github/watchers/luhnox/Discord-SelfBot-Voice?style=flat&logo=github)](https://github.com/luhnox/Discord-SelfBot-Voice/watchers) [![Forks](https://img.shields.io/github/forks/luhnox/Discord-SelfBot-Voice?style=flat&logo=github)](https://github.com/luhnox/Discord-SelfBot-Voice/network/members)
+[![Stars](https://img.shields.io/github/stars/luhnox/Discord-Self-Bot-Voice?style=flat&logo=github)](https://github.com/luhnox/Discord-Self-Bot-Voice/stargazers) [![Watchers](https://img.shields.io/github/watchers/luhnox/Discord-Self-Bot-Voice?style=flat&logo=github)](https://github.com/luhnox/Discord-Self-Bot-Voice/watchers) [![Forks](https://img.shields.io/github/forks/luhnox/Discord-Self-Bot-Voice?style=flat&logo=github)](https://github.com/luhnox/Discord-Self-Bot-Voice/network/members)
 
 Brief: this project is a "self-bot" that maintains a persistent voice connection on Discord.
 
@@ -12,16 +12,16 @@ Important: Running self-bots violates Discord's Terms of Service. Use this repos
 
 ## Automatic Stars / Watchers / Forks badges
 
-The badges above use Shields.io and will display values automatically from the GitHub repository. To make them work, replace `luhnox/Discord-SelfBot-Voice` in the badge URLs with your GitHub owner and repository name, or add repository metadata to `package.json`:
+The badges above use Shields.io and will display values automatically from the GitHub repository. To make them work, replace `luhnox/Discord-Self-Bot-Voice` in the badge URLs with your GitHub owner and repository name, or add repository metadata to `package.json`:
 
 ```json
 "repository": {
   "type": "git",
-  "url": "https://github.com/luhnox/Discord-SelfBot-Voice.git"
+  "url": "https://github.com/luhnox/Discord-Self-Bot-Voice.git"
 }
 ```
 
-Once the project is pushed to GitHub (or the `luhnox/Discord-SelfBot-Voice` is set), the badges will show the number of Stars, Watchers, and Forks automatically.
+Once the project is pushed to GitHub (or the `luhnox/Discord-Self-Bot-Voice` is set), the badges will show the number of Stars, Watchers, and Forks automatically.
 
 ## Requirements
 - Node.js (LTS recommended)
