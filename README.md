@@ -1,10 +1,12 @@
 # Discord Self-Bot (Voice)
 
-[![Stars](https://img.shields.io/github/stars/luhnox/Discord-Self-Bot-Voice?style=flat&logo=github)](https://github.com/luhnox/Discord-Self-Bot-Voice/stargazers) [![Watchers](https://img.shields.io/github/watchers/luhnox/Discord-Self-Bot-Voice?style=flat&logo=github)](https://github.com/luhnox/Discord-Self-Bot-Voice/watchers) [![Forks](https://img.shields.io/github/forks/luhnox/Discord-Self-Bot-Voice?style=flat&logo=github)](https://github.com/luhnox/Discord-Self-Bot-Voice/network/members)
+[![Stars](https://img.shields.io/github/stars/luhnox/Discord-Self-Bot-Voice?style=flat&logo=github)](https://github.com/luhnox/Discord-Self-Bot-Voice/stargazers) [![Watchers](https://img.shields.io/github/watchers/luhnox/Discord-Self-Bot-Voice?style=flat&logo=github)](https://github.com/luhnox/Discord-Self-Bot-Voice/watchers) [![Forks](https://img.shields.io/github/forks/luhnox/Discord-Self-Bot-Voice?style=flat&logo=github)](https://github.com/luhnox/Discord-Self-Bot-Voice/network/members) [![Status](https://img.shields.io/badge/status-active-success.svg)] [![Platform](https://img.shields.io/badge/platform-Redfinger%20Cloud%20Phone-orange.svg)]
 
-Brief: this project is a "self-bot" that maintains a persistent voice connection on Discord.
+> [!BRIEF] 
+> this project is a "self-bot" that maintains a persistent voice connection on Discord.
 
-Important: Running self-bots violates Discord's Terms of Service. Use this repository for education or experimentation only and at your own risk.
+> [!IMPORTANT] 
+> Running self-bots violates Discord's Terms of Service. Use this repository for education or experimentation only and at your own risk.
 
 ## Features
 - Keeps a voice connection alive
