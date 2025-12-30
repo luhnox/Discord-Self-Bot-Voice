@@ -2,13 +2,21 @@
   "name": "selfbot-discord",
   "version": "1.0.0",
   "description": "A Discord selfbot that stays connected to a voice channel.",
-  "keywords": ["discord","self","bot","voice"],
+  "keywords": [
+    "discord",
+    "self",
+    "bot",
+    "voice"
+  ],
   "main": "index.js",
   "scripts": {
     "start": "node index.js"
   },
   "author": "luhnox",
-  "repository": {},
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/luhnox/Discord-Self-Bot-Voice.git"
+  },
   "dependencies": {
     "debug": "^4.4.3",
     "discord.js-selfbot-v13": "^3.7.1"
