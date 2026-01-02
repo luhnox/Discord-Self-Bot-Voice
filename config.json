@@ -1,7 +1,7 @@
 {
-  "settings": {
-    "selfMute": true,
-    "selfDeaf": false,
-    "selfVideo": false
-  }
+    "settings": {
+        "selfMute": false,
+        "selfDeaf": false,
+        "selfVideo": false
+    }
 }
