@@ -42,7 +42,7 @@ client.on('ready', async () => {
         const newConfig = loadConfig();
         const newSettings = newConfig.settings;
 
-        // Hanya re-apply jika ada perubahan
+        // Check if relevant settings changed before applying update to avoid unnecessary re-joins 
         if (
           oldSettings.selfMute !== newSettings.selfMute ||
           oldSettings.selfDeaf !== newSettings.selfDeaf ||
@@ -50,9 +50,9 @@ client.on('ready', async () => {
         ) {
           console.log('config.json changed, applying new voice settings:', newSettings);
 
-          // Kalau sudah ada connection dan masih di channel yang sama, kirim update
+          // If currently connected to the target channel, re-apply settings 
           if (connection && connection.channel && connection.channel.id === CHANNEL_ID) {
-            // Cara paling mudah: panggil joinChannel lagi dengan opsi baru
+            // The easiest way: call joinChannel again with new options
             const ch = await client.channels.fetch(CHANNEL_ID).catch(() => null);
             if (!ch) return console.error('Channel not found while applying new config');
             connection = await client.voice.joinChannel(ch, newSettings);
