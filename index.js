@@ -3,8 +3,8 @@ const fs = require('fs');
 let config = require('./config.json');
 const _consoleLog = console.log;
 const _consoleInfo = console.info;
-console.log = () => {};
-console.info = () => {};
+console.log = () => { };
+console.info = () => { };
 require('dotenv').config();
 console.log = _consoleLog;
 console.info = _consoleInfo;
@@ -97,6 +97,16 @@ client.on('ready', async () => {
             console.error('Channel not found while applying new config');
             return;
           }
+
+          try {
+            if (typeof connection.disconnect === 'function') {
+              await connection.disconnect().catch(() => { });
+            }
+            if (typeof connection.destroy === 'function') {
+              connection.destroy();
+            }
+          } catch (e) { }
+          await sleep(1000);
 
           connection = await joinChannelWithRetries(ch, newSettings, 3, 7000);
           console.log('Re-applied voice settings from config.json');
