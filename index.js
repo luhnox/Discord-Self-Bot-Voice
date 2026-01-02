@@ -1,12 +1,13 @@
-/**
- * ============================
- *  Core Imports & Configuration
- * ============================
- */
 const { Client } = require('discord.js-selfbot-v13');
 const fs = require('fs');
 let config = require('./config.json');
+const _consoleLog = console.log;
+const _consoleInfo = console.info;
+console.log = () => {};
+console.info = () => {};
 require('dotenv').config();
+console.log = _consoleLog;
+console.info = _consoleInfo;
 
 function loadConfig() {
   delete require.cache[require.resolve('./config.json')];
