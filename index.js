@@ -17,6 +17,32 @@ process.env.DEBUG = process.env.DEBUG || 'werift*';
 
 const client = new Client();
 
+async function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+async function joinChannelWithRetries(channel, settings, maxAttempts = 3, delayMs = 5000) {
+  let lastErr = null;
+  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+    try {
+      const conn = await client.voice.joinChannel(channel, settings);
+      return conn;
+    } catch (err) {
+      lastErr = err;
+      const code = err && (err.code || (err[Symbol.for('code')] && err[Symbol.for('code')]));
+      if (code === 'VOICE_CONNECTION_TIMEOUT') {
+        console.warn(
+          `Voice connection timeout (attempt ${attempt}/${maxAttempts}). Retrying in ${delayMs}ms...`,
+        );
+        if (attempt < maxAttempts) await sleep(delayMs);
+        continue;
+      }
+      throw err;
+    }
+  }
+  throw lastErr;
+}
+
 const CHANNEL_ID = process.env.CHANNEL_ID;
 const TOKEN = process.env.TOKEN;
 
@@ -46,10 +72,8 @@ client.on('ready', async () => {
       return;
     }
 
-    connection = await client.voice.joinChannel(channel, config.settings);
-    console.log(
-      `Joined voice channel — staying connected. Name: ${channel.name} | ID: ${channel.id}`,
-    );
+    connection = await joinChannelWithRetries(channel, config.settings, 3, 7000);
+    console.log(`Joined voice channel — staying connected. Name: ${channel.name} | ID: ${channel.id}`);
 
     fs.watchFile('./config.json', async () => {
       try {
@@ -73,7 +97,7 @@ client.on('ready', async () => {
             return;
           }
 
-          connection = await client.voice.joinChannel(ch, newSettings);
+          connection = await joinChannelWithRetries(ch, newSettings, 3, 7000);
           console.log('Re-applied voice settings from config.json');
         }
       } catch (e) {
@@ -104,7 +128,7 @@ client.on('ready', async () => {
             return;
           }
 
-          connection = await client.voice.joinChannel(ch, config.settings);
+          connection = await joinChannelWithRetries(ch, config.settings, 3, 7000);
           console.log('Reconnected to voice channel.');
         }
       } catch (err) {
