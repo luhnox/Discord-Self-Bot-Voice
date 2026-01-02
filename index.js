@@ -6,6 +6,7 @@
 const { Client } = require('discord.js-selfbot-v13');
 const fs = require('fs');
 let config = require('./config.json');
+require('dotenv').config();
 
 function loadConfig() {
   delete require.cache[require.resolve('./config.json')];
@@ -14,9 +15,7 @@ function loadConfig() {
 }
 process.env.DEBUG = process.env.DEBUG || 'werift*';
 
-const client = new Client({
-  intents: ['GUILDS', 'GUILD_VOICE_STATES', 'GUILD_MEMBERS'],
-});
+const client = new Client();
 
 const CHANNEL_ID = process.env.CHANNEL_ID;
 const TOKEN = process.env.TOKEN;
