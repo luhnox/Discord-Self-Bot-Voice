@@ -2,6 +2,7 @@
     "settings": {
         "selfMute": false,
         "selfDeaf": false,
-        "selfVideo": false
+        "selfVideo": false,
+        "CHANNEL_ID": 1450078664132657252
     }
 }
