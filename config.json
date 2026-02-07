@@ -1,8 +1,14 @@
 {
-    "settings": {
-        "selfMute": false,
-        "selfDeaf": false,
-        "selfVideo": false,
-        "CHANNEL_ID": 1450078664132657252
+    "main": {
+        "selfMute": true,
+        "selfDeaf": true,
+        "selfVideo": true,
+        "CHANNEL_ID": "1443902406143508585"
+    },
+    "second": {
+        "selfMute": true,
+        "selfDeaf": true,
+        "selfVideo": true,
+        "CHANNEL_ID": "1443902406143508585"
     }
 }
