@@ -1,14 +1,14 @@
 {
     "main": {
-        "selfMute": true,
-        "selfDeaf": true,
-        "selfVideo": true,
+        "selfMute": false,
+        "selfDeaf": false,
+        "selfVideo": false,
         "CHANNEL_ID": "1444193936150364211"
     },
     "second": {
-        "selfMute": true,
-        "selfDeaf": true,
-        "selfVideo": true,
+        "selfMute": false,
+        "selfDeaf": false,
+        "selfVideo": false,
         "CHANNEL_ID": "1444193936150364211"
     }
 }
