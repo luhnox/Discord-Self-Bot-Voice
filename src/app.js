@@ -3,15 +3,73 @@
  * Main orchestration module
  */
 
+const https = require('https');
+const { exec } = require('child_process');
+const fs = require('fs');
+const path = require('path');
 const { log, cleanupOldLogs } = require('./utils/logger');
 const { validateConfig, getTokens } = require('./config/config');
 const { startClient } = require('./core/client');
 const { LOG_CLEANUP_INTERVAL_MS } = require('./utils/constants');
 
 /**
+ * Check for updates from GitHub repository
+ */
+async function checkForUpdates() {
+    const repo = 'luhnox/Discord-Self-Bot-Voice';
+    const url = `https://raw.githubusercontent.com/${repo}/main/package.json`;
+
+    return new Promise((resolve) => {
+        https.get(url, (res) => {
+            let data = '';
+            res.on('data', chunk => data += chunk);
+            res.on('end', () => {
+                if (res.statusCode !== 200) {
+                    log('ERROR', `Failed to check for updates: HTTP ${res.statusCode}`);
+                    resolve();
+                    return;
+                }
+
+                try {
+                    const remotePackage = JSON.parse(data);
+                    const remoteVersion = remotePackage.version;
+                    const localVersion = require('../package.json').version;
+
+                    if (remoteVersion !== localVersion) {
+                        log('INFO', `New version available: ${remoteVersion} (current: ${localVersion}). Updating...`);
+                        exec('git pull', (err, stdout, stderr) => {
+                            if (err) {
+                                log('ERROR', `Failed to update: ${err}`);
+                                resolve();
+                            } else {
+                                log('INFO', 'Update successful. Please restart the application to use the new version.');
+                                // Note: Not exiting automatically to avoid interrupting user
+                                resolve();
+                            }
+                        });
+                    } else {
+                        log('INFO', 'Version is up to date.');
+                        resolve();
+                    }
+                } catch (e) {
+                    log('ERROR', `Error parsing update response: ${e}`);
+                    resolve();
+                }
+            });
+        }).on('error', (err) => {
+            log('ERROR', `Failed to check for updates: ${err}`);
+            resolve();
+        });
+    });
+}
+
+/**
  * Start the Discord bot application
  */
-function start() {
+async function start() {
+    // Check for updates first
+    await checkForUpdates();
+
     // Validate configuration
     if (!validateConfig()) {
         log('ERROR', 'Configuration validation failed. Exiting...');
