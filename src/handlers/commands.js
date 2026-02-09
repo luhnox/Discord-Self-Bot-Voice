@@ -164,15 +164,43 @@ function handleToggleSetting(userId, setting) {
  * Handle set channel command
  * @param {string} userId - User ID
  * @param {string} channelId - Channel ID
+ * @param {Object} client - Discord client (optional, for validation)
  * @returns {Object} Result with message and userConfig
  */
-function handleSetChannel(userId, channelId) {
+async function handleSetChannel(userId, channelId, client = null) {
     const normalized = normalizeChannelId(channelId);
     if (!normalized) {
         return {
             success: false,
             message: `❌ Invalid channel ID: ${channelId}`
         };
+    }
+
+    // Validate channel exists if client is provided
+    if (client) {
+        try {
+            const channel = await client.channels.fetch(normalized).catch(() => null);
+            if (!channel) {
+                return {
+                    success: false,
+                    message: `❌ Channel not found or not accessible: ${normalized}`
+                };
+            }
+            
+            // Check if it's a voice/stage channel
+            const VOICE_CHANNEL_TYPES = ['GUILD_VOICE', 'GUILD_STAGE_VOICE', 2, 13];
+            if (!VOICE_CHANNEL_TYPES.includes(channel.type)) {
+                return {
+                    success: false,
+                    message: `❌ Channel ${normalized} is not a voice/stage channel`
+                };
+            }
+        } catch (err) {
+            return {
+                success: false,
+                message: `❌ Error validating channel: ${err.message}`
+            };
+        }
     }
 
     const userConfig = updateUserSettings(userId, { channel_id: normalized });
@@ -187,7 +215,8 @@ function handleSetChannel(userId, channelId) {
         success: true,
         message: `✅ ${userId}'s channel has been set to **${normalized}**`,
         userConfig,
-        action: 'channel_change'
+        action: 'channel_change',
+        newChannelId: normalized
     };
 }
 
@@ -195,9 +224,10 @@ function handleSetChannel(userId, channelId) {
  * Main command handler
  * @param {string} content - Message content
  * @param {Object} message - Discord message object
- * @returns {Object|null} Command result or null
+ * @param {Object} client - Discord client (optional, for channel validation)
+ * @returns {Promise<Object|null>} Command result or null
  */
-function handleCommand(content, message) {
+async function handleCommand(content, message, client = null) {
     const parsed = parseCommand(content);
     if (!parsed) return null;
 
@@ -281,7 +311,7 @@ function handleCommand(content, message) {
                     message: `❌ Usage: <@${userId}> set channel <channel_id>`
                 };
             }
-            return handleSetChannel(userId, args[1]);
+            return await handleSetChannel(userId, args[1], client);
         }
 
         return {

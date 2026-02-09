@@ -1,5 +1,6 @@
 const { log } = require('../utils/logger');
 const { handleCommand } = require('../handlers/commands');
+const { saveLastChannelId } = require('../config/state');
 
 /**
  * Setup message event handler
@@ -26,7 +27,7 @@ function setupMessageHandler(client, context) {
             }
 
             // Try to parse and handle command
-            const result = handleCommand(message.content, message);
+            const result = await handleCommand(message.content, message, client);
 
             if (!result) {
                 // Not a valid command, ignore
@@ -50,6 +51,12 @@ function setupMessageHandler(client, context) {
                     userId: result.userConfig?.userid
                 });
             } else if (result.action === 'channel_change' && onCommandAction) {
+                // Save to bot-state.json when channel changes
+                if (result.newChannelId) {
+                    saveLastChannelId(result.newChannelId, currentUserId);
+                    log('INFO', `[${currentUserId}] bot-state.json updated with new channel ID: ${result.newChannelId}`);
+                }
+                
                 onCommandAction({
                     type: 'channel_change',
                     userId: result.userConfig?.userid,
