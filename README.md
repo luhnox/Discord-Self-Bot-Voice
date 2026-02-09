@@ -26,17 +26,6 @@
 - **👥 User-ID Based** - Manage users by Discord ID
 - **⚡ Message Handler** - Listen to Discord messages for commands
 
-### 🆕 New Modules
-- `src/config/database.js` - Database manager for config.json
-- `src/handlers/commands.js` - Command parser and handler
-- `src/events/messageCreate.js` - Message event listener
-
-### 📚 Documentation
-- `COMMANDS.md` - Complete command reference
-- `QUICKSTART.md` - 5-minute setup guide
-- `CONFIG_GUIDE.md` - Configuration details
-- `DOCS_INDEX.md` - Documentation index
-
 ---
 
 ### 🎯 Core Features
@@ -358,18 +347,6 @@ All changes are **immediately saved** to config.json:
 1032472108414017576 set offline
 # ✅ Status updated and saved!
 ```
-
----
-
-## � Documentation
-
-New comprehensive documentation for v3.0.0:
-
-- **[COMMANDS.md](./COMMANDS.md)** - Complete command reference and examples
-- **[QUICKSTART.md](./QUICKSTART.md)** - 5-minute setup guide ⭐ START HERE
-- **[CONFIG_GUIDE.md](./CONFIG_GUIDE.md)** - Detailed configuration guide
-- **[SETUP_VERIFICATION.md](./SETUP_VERIFICATION.md)** - Setup checklist and verification
-- **[DOCS_INDEX.md](./DOCS_INDEX.md)** - Documentation index and quick links
 
 ---
 
