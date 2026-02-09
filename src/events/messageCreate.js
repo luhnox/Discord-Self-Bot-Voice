@@ -2,6 +2,11 @@ const { log } = require('../utils/logger');
 const { handleCommand } = require('../handlers/commands');
 const { saveLastChannelId } = require('../config/state');
 
+// Track last channel change time per user (to prevent rapid changes)
+const lastChannelChangeTime = new Map();
+// Track last settings change time per user (to prevent rapid changes)
+const lastSettingsChangeTime = new Map();
+
 /**
  * Setup message event handler
  * @param {Object} client - Discord client
@@ -26,6 +31,69 @@ function setupMessageHandler(client, context) {
                 return;
             }
 
+            // Check for channel change cooldown (minimum 8 seconds between changes)
+            const isChannelChangeCommand = parts.length >= 4 && 
+                                          parts[1].toLowerCase() === 'set' && 
+                                          parts[2].toLowerCase() === 'channel';
+            
+            if (isChannelChangeCommand) {
+                const now = Date.now();
+                const lastChange = lastChannelChangeTime.get(currentUserId) || 0;
+                const cooldownMs = 8000; // 8 seconds cooldown
+                const timeSinceLastChange = now - lastChange;
+                
+                if (timeSinceLastChange < cooldownMs) {
+                    const remainingMs = cooldownMs - timeSinceLastChange;
+                    const availableAtTimestamp = Math.floor((now + remainingMs) / 1000);
+                    
+                    const replyMessage = await message.reply(`⏳ Please wait <t:${availableAtTimestamp}:R> before changing channel again.`).catch(() => null);
+                    
+                    // Auto-delete the message after cooldown expires
+                    if (replyMessage) {
+                        setTimeout(() => {
+                            replyMessage.delete().catch(() => {});
+                        }, remainingMs);
+                    }
+                    
+                    return;
+                }
+                
+                // Update last channel change time
+                lastChannelChangeTime.set(currentUserId, now);
+            }
+
+            // Check for settings change cooldown (minimum 5 seconds between changes)
+            const isSettingsChangeCommand = parts.length >= 4 && 
+                                           parts[1].toLowerCase() === 'set' && 
+                                           parts[2].toLowerCase() === 'settings' &&
+                                           ['mute', 'deaf', 'video'].includes(parts[3]?.toLowerCase());
+            
+            if (isSettingsChangeCommand) {
+                const now = Date.now();
+                const lastChange = lastSettingsChangeTime.get(currentUserId) || 0;
+                const cooldownMs = 5000; // 5 seconds cooldown
+                const timeSinceLastChange = now - lastChange;
+                
+                if (timeSinceLastChange < cooldownMs) {
+                    const remainingMs = cooldownMs - timeSinceLastChange;
+                    const availableAtTimestamp = Math.floor((now + remainingMs) / 1000);
+                    
+                    const replyMessage = await message.reply(`⏳ Please wait <t:${availableAtTimestamp}:R> before changing settings again.`).catch(() => null);
+                    
+                    // Auto-delete the message after cooldown expires
+                    if (replyMessage) {
+                        setTimeout(() => {
+                            replyMessage.delete().catch(() => {});
+                        }, remainingMs);
+                    }
+                    
+                    return;
+                }
+                
+                // Update last settings change time
+                lastSettingsChangeTime.set(currentUserId, now);
+            }
+
             // Try to parse and handle command
             const result = await handleCommand(message.content, message, client);
 
@@ -39,9 +107,17 @@ function setupMessageHandler(client, context) {
 
             // Send reply
             if (result.message) {
-                await message.reply(result.message).catch(err => {
+                const replyMessage = await message.reply(result.message).catch(err => {
                     log('ERROR', `Failed to send reply: ${err.message}`);
+                    return null;
                 });
+                
+                // Auto-delete command reply after 10 seconds
+                if (replyMessage) {
+                    setTimeout(() => {
+                        replyMessage.delete().catch(() => {});
+                    }, 10000); // 10 seconds
+                }
             }
 
             // Handle special actions
