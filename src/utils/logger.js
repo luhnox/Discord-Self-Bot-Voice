@@ -28,11 +28,10 @@ function log(level, message) {
 }
 
 /**
- * Get log retention days from environment or use default
  * @returns {number} Number of days to retain logs
  */
 function getLogRetentionDays() {
-    const raw = process.env.LOG_RETENTION_DAYS;
+    const raw = 7;
     const days = raw ? Number(raw) : 7;
     if (!Number.isFinite(days) || days < 1) return 7;
     return Math.floor(days);
