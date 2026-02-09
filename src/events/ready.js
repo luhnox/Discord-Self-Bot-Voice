@@ -5,6 +5,7 @@ const { saveLastChannelId } = require('../config/state');
 const { joinChannelWithRetries } = require('../core/voice');
 const { VOICE_CHANNEL_TYPES } = require('../utils/constants');
 const { handleConfigChange } = require('../handlers/configChange');
+const { findUserConfig } = require('../config/database');
 
 /**
  * Setup ready event handler for Discord client
@@ -20,6 +21,25 @@ function setupReadyHandler(client, context) {
         let connection = null;
 
         try {
+            // Check user status in database
+            const userConfig = findUserConfig(label);
+            if (!userConfig) {
+                log('ERROR', `[${label}] User not found in database. Skipping voice channel join.`);
+                return;
+            }
+
+            // Check if user is offline in database
+            if (userConfig.status === 'offline') {
+                log('INFO', `[${label}] User status is offline. Skipping voice channel join.`);
+                return;
+            }
+
+            // Check if channel_id is set
+            if (!CHANNEL_ID) {
+                log('WARN', `[${label}] Channel ID not configured. Skipping voice channel join.`);
+                return;
+            }
+
             let channel = client.channels.cache.get(CHANNEL_ID);
             if (!channel) {
                 channel = await client.channels.fetch(CHANNEL_ID).catch(() => null);

@@ -203,6 +203,14 @@ function handleCommand(content, message) {
 
     const { userId, command, args } = parsed;
 
+    // Only log debug if user exists in database
+    const userConfig = findUserConfig(userId);
+    if (!userConfig) {
+        // User not in database, silently skip
+        return null;
+    }
+
+    // Log debug only for valid users
     log('DEBUG', `Command: userId=${userId}, cmd=${command}, args=${args.join(' ')}`);
 
     // Help command
