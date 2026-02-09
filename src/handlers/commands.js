@@ -11,7 +11,8 @@ const COMMANDS = {
     SET: 'set',
     SETTING: 'setting',
     SETTINGS: 'settings',
-    HELP: 'help'
+    HELP: 'help',
+    RELOAD: 'reload'
 };
 
 /**
@@ -48,6 +49,7 @@ function getHelpMessage() {
 <@userid> set settings deaf              - Toggle self deaf
 <@userid> set settings video             - Toggle self video
 <@userid> set channel <channel_id>       - Set voice channel
+<@userid> reload                         - Rejoin voice channel to refresh state
 <@userid> help                           - Show this help message
 \`\`\`
 
@@ -55,7 +57,8 @@ function getHelpMessage() {
 \`1032472108414017576 set offline\`
 \`<@1032472108414017576> settings list\`
 \`1032472108414017576 set settings mute\`
-\`1032472108414017576 set channel 1449039761489788939\``;
+\`1032472108414017576 set channel 1449039761489788939\`
+\`1032472108414017576 reload\``;
 }
 
 /**
@@ -248,6 +251,16 @@ async function handleCommand(content, message, client = null) {
         return {
             success: true,
             message: getHelpMessage()
+        };
+    }
+
+    // Reload command - rejoin voice channel to refresh state
+    if (command === COMMANDS.RELOAD) {
+        return {
+            success: true,
+            message: `🔄 Reloading voice connection for ${userId}... Rejoining channel with current settings.`,
+            userConfig,
+            action: 'reload'
         };
     }
 

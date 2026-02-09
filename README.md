@@ -5,7 +5,7 @@
 [![GitHub stars](https://img.shields.io/github/stars/luhnox/Discord-Self-Bot-Voice?style=social)](https://github.com/luhnox/Discord-Self-Bot-Voice/stargazers)
 [![GitHub forks](https://img.shields.io/github/forks/luhnox/Discord-Self-Bot-Voice?style=social)](https://github.com/luhnox/Discord-Self-Bot-Voice/network/members)
 [![Node.js Version](https://img.shields.io/badge/node-%3E%3D14.0.0-brightgreen)](https://nodejs.org/)
-[![Version](https://img.shields.io/badge/version-3.1.2-blue.svg)](package.json)
+[![Version](https://img.shields.io/badge/version-3.2.0-blue.svg)](package.json)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
 **A powerful Discord self-bot that stays connected to voice channels with command-based control and multi-account support**
@@ -526,15 +526,14 @@ In `./logs/` folder by date: `discord-bot-YYYY-MM-DD.log`
 
 ## 📝 Changelog
 
-### v3.1.2 (Latest - Command Cooldowns & Auto-Cleanup)
-- ✅ **Channel Change Validation** - Validates channel exists and is a voice/stage channel before switching
-- ✅ **Channel Change Cooldown** - 8 seconds cooldown between channel changes
-- ✅ **Settings Change Cooldown** - 5 seconds cooldown between settings changes (mute/deaf/video)
-- ✅ **Auto-Delete Replies** - All command replies auto-delete after 10 seconds for clean chat
-- ✅ **Discord Timestamps** - Cooldown messages show relative time countdown
-- ✅ **bot-state.json Sync** - Channel changes update both config.json and bot-state.json
+### v3.2.0 (Latest - Reload Command & Unified Cooldown)
+- ✨ **Reload Command** - New `reload` command to refresh voice state (disconnect and reconnect)
+- ✅ **Voice State Sync** - Force sync Discord voice state with config.json settings
+- 🔧 **Unified Cooldown System** - All commands share single cooldown tracker
+- ⏱️ **Smart Cooldown** - 8s for channel/reload, 5s for settings changes
+- 📊 **Better State Management** - Reload resets reconnect attempts counter
 
-### v3.1.1 (Config Handler Fix)
+### v3.1.2 (Command Cooldowns & Auto-Cleanup)
 - ✅ **Respect Offline Status** - Users with offline status won't auto-join voice (but still receive commands)
 - ✅ **Debug Log Validation** - Only log DEBUG for valid users in database
 - ✅ **Reduced Log Spam** - Silently skip commands from unknown users

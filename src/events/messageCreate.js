@@ -40,19 +40,23 @@ function setupMessageHandler(client, context) {
                                            parts[2].toLowerCase() === 'settings' &&
                                            ['mute', 'deaf', 'video'].includes(parts[3]?.toLowerCase());
             
-            // Unified cooldown check for both channel and settings changes
-            if (isChannelChangeCommand || isSettingsChangeCommand) {
+            // Check for reload command (minimum 8 seconds cooldown)
+            const isReloadCommand = parts.length >= 2 && 
+                                   parts[1].toLowerCase() === 'reload';
+            
+            // Unified cooldown check for channel, settings changes, and reload
+            if (isChannelChangeCommand || isSettingsChangeCommand || isReloadCommand) {
                 const now = Date.now();
                 const lastChange = lastChangeTime.get(currentUserId) || 0;
-                const cooldownMs = isChannelChangeCommand ? 8000 : 5000; // 8s for channel, 5s for settings
+                const cooldownMs = (isChannelChangeCommand || isReloadCommand) ? 8000 : 5000; // 8s for channel/reload, 5s for settings
                 const timeSinceLastChange = now - lastChange;
                 
                 if (timeSinceLastChange < cooldownMs) {
                     const remainingMs = cooldownMs - timeSinceLastChange;
                     const availableAtTimestamp = Math.floor((now + remainingMs) / 1000);
-                    const commandType = isChannelChangeCommand ? 'channel' : 'settings';
+                    const commandType = isChannelChangeCommand ? 'channel' : isReloadCommand ? 'reload' : 'settings';
                     
-                    const replyMessage = await message.reply(`⏳ Please wait <t:${availableAtTimestamp}:R> before changing ${commandType} again.`).catch(() => null);
+                    const replyMessage = await message.reply(`⏳ Please wait <t:${availableAtTimestamp}:R> before ${isReloadCommand ? 'reloading' : `changing ${commandType}`} again.`).catch(() => null);
                     
                     // Auto-delete the message after cooldown expires
                     if (replyMessage) {
@@ -64,7 +68,7 @@ function setupMessageHandler(client, context) {
                     return;
                 }
                 
-                // Update last change time (shared for both types)
+                // Update last change time (shared for all types)
                 lastChangeTime.set(currentUserId, now);
             }
 
@@ -111,6 +115,14 @@ function setupMessageHandler(client, context) {
                     type: 'channel_change',
                     userId: result.userConfig?.userid,
                     channelId: result.userConfig?.settings.channel_id
+                });
+            } else if (result.action === 'reload' && onCommandAction) {
+                // Reload: disconnect and reconnect to refresh voice state
+                onCommandAction({
+                    type: 'reload',
+                    userId: result.userConfig?.userid,
+                    channelId: result.userConfig?.settings.channel_id,
+                    settings: result.userConfig?.settings
                 });
             }
 

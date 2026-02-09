@@ -56,7 +56,7 @@ async function startClient(token, userid, config) {
     // Setup message handler for commands
     setupMessageHandler(client, {
         label: userid,
-        onCommandAction: (action) => {
+        onCommandAction: async (action) => {
             if (action.type === 'disconnect') {
                 log('INFO', `[${userid}] Disconnecting from voice due to command`);
                 if (connection) {
@@ -66,6 +66,36 @@ async function startClient(token, userid, config) {
             } else if (action.type === 'channel_change') {
                 log('INFO', `[${userid}] Channel changed to ${action.channelId}`);
                 CHANNEL_ID = action.channelId;
+            } else if (action.type === 'reload') {
+                log('INFO', `[${userid}] Reloading voice connection...`);
+                
+                // Disconnect current connection
+                if (connection) {
+                    try {
+                        await connection.disconnect().catch(() => {});
+                        connection = null;
+                    } catch (err) {
+                        log('WARN', `[${userid}] Error disconnecting during reload: ${err.message}`);
+                    }
+                }
+                
+                // Wait a moment before reconnecting
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                
+                // Rejoin with current settings
+                try {
+                    const channel = await client.channels.fetch(action.channelId).catch(() => null);
+                    if (channel) {
+                        const newConnection = await joinChannelWithRetries(client, channel, action.settings);
+                        connection = newConnection;
+                        reconnectAttempts = 0; // Reset reconnect attempts
+                        log('INFO', `[${userid}] Voice connection reloaded successfully`);
+                    } else {
+                        log('ERROR', `[${userid}] Channel not found during reload`);
+                    }
+                } catch (err) {
+                    log('ERROR', `[${userid}] Failed to reload voice connection: ${err.message}`);
+                }
             }
         },
         onSettingsUpdate: (update) => {
