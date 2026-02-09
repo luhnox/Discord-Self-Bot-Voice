@@ -4,15 +4,26 @@ const { handleCommand } = require('../handlers/commands');
 /**
  * Setup message event handler
  * @param {Object} client - Discord client
- * @param {Object} context - Context with label and callbacks
+ * @param {Object} context - Context with label (userid) and callbacks
  */
 function setupMessageHandler(client, context) {
-    const { label, onCommandAction } = context;
+    const { label: currentUserId, onCommandAction } = context;
 
     client.on('messageCreate', async (message) => {
         try {
             // Ignore bot messages and empty content
             if (message.author.bot || !message.content) return;
+
+            // Parse command to get target userid
+            const parts = message.content.trim().split(/\s+/);
+            if (parts.length < 2) return;
+            
+            const targetUserId = parts[0].replace(/[<@!>]/g, '');
+            
+            // Only respond if this message is for this user
+            if (targetUserId !== currentUserId) {
+                return;
+            }
 
             // Try to parse and handle command
             const result = handleCommand(message.content, message);
@@ -23,7 +34,7 @@ function setupMessageHandler(client, context) {
             }
 
             // Log command
-            log('INFO', `[${label}] Command executed by ${message.author.username}: ${message.content}`);
+            log('INFO', `[${currentUserId}] Command executed by ${message.author.username}: ${message.content}`);
 
             // Send reply
             if (result.message) {

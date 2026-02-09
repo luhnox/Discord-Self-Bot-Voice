@@ -1,6 +1,6 @@
 {
   "name": "selfbot-discord",
-  "version": "3.0.2",
+  "version": "3.0.3",
   "description": "A Discord selfbot that stays connected to a voice channel.",
   "keywords": [
     "discord",
