@@ -2,10 +2,8 @@ const { log } = require('../utils/logger');
 const { handleCommand } = require('../handlers/commands');
 const { saveLastChannelId } = require('../config/state');
 
-// Track last channel change time per user (to prevent rapid changes)
-const lastChannelChangeTime = new Map();
-// Track last settings change time per user (to prevent rapid changes)
-const lastSettingsChangeTime = new Map();
+// Track last command change time per user (to prevent rapid changes)
+const lastChangeTime = new Map();
 
 /**
  * Setup message event handler
@@ -36,49 +34,25 @@ function setupMessageHandler(client, context) {
                                           parts[1].toLowerCase() === 'set' && 
                                           parts[2].toLowerCase() === 'channel';
             
-            if (isChannelChangeCommand) {
-                const now = Date.now();
-                const lastChange = lastChannelChangeTime.get(currentUserId) || 0;
-                const cooldownMs = 8000; // 8 seconds cooldown
-                const timeSinceLastChange = now - lastChange;
-                
-                if (timeSinceLastChange < cooldownMs) {
-                    const remainingMs = cooldownMs - timeSinceLastChange;
-                    const availableAtTimestamp = Math.floor((now + remainingMs) / 1000);
-                    
-                    const replyMessage = await message.reply(`⏳ Please wait <t:${availableAtTimestamp}:R> before changing channel again.`).catch(() => null);
-                    
-                    // Auto-delete the message after cooldown expires
-                    if (replyMessage) {
-                        setTimeout(() => {
-                            replyMessage.delete().catch(() => {});
-                        }, remainingMs);
-                    }
-                    
-                    return;
-                }
-                
-                // Update last channel change time
-                lastChannelChangeTime.set(currentUserId, now);
-            }
-
             // Check for settings change cooldown (minimum 5 seconds between changes)
             const isSettingsChangeCommand = parts.length >= 4 && 
                                            parts[1].toLowerCase() === 'set' && 
                                            parts[2].toLowerCase() === 'settings' &&
                                            ['mute', 'deaf', 'video'].includes(parts[3]?.toLowerCase());
             
-            if (isSettingsChangeCommand) {
+            // Unified cooldown check for both channel and settings changes
+            if (isChannelChangeCommand || isSettingsChangeCommand) {
                 const now = Date.now();
-                const lastChange = lastSettingsChangeTime.get(currentUserId) || 0;
-                const cooldownMs = 5000; // 5 seconds cooldown
+                const lastChange = lastChangeTime.get(currentUserId) || 0;
+                const cooldownMs = isChannelChangeCommand ? 8000 : 5000; // 8s for channel, 5s for settings
                 const timeSinceLastChange = now - lastChange;
                 
                 if (timeSinceLastChange < cooldownMs) {
                     const remainingMs = cooldownMs - timeSinceLastChange;
                     const availableAtTimestamp = Math.floor((now + remainingMs) / 1000);
+                    const commandType = isChannelChangeCommand ? 'channel' : 'settings';
                     
-                    const replyMessage = await message.reply(`⏳ Please wait <t:${availableAtTimestamp}:R> before changing settings again.`).catch(() => null);
+                    const replyMessage = await message.reply(`⏳ Please wait <t:${availableAtTimestamp}:R> before changing ${commandType} again.`).catch(() => null);
                     
                     // Auto-delete the message after cooldown expires
                     if (replyMessage) {
@@ -90,8 +64,8 @@ function setupMessageHandler(client, context) {
                     return;
                 }
                 
-                // Update last settings change time
-                lastSettingsChangeTime.set(currentUserId, now);
+                // Update last change time (shared for both types)
+                lastChangeTime.set(currentUserId, now);
             }
 
             // Try to parse and handle command
