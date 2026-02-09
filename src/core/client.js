@@ -67,6 +67,13 @@ async function startClient(token, userid, config) {
                 log('INFO', `[${userid}] Channel changed to ${action.channelId}`);
                 CHANNEL_ID = action.channelId;
             }
+        },
+        onSettingsUpdate: (update) => {
+            // Reload settings from updated user config
+            if (update.settings) {
+                currentSettings = update.settings;
+                log('INFO', `[${userid}] Settings updated and reloaded in memory`);
+            }
         }
     });
 

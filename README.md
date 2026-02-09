@@ -5,7 +5,7 @@
 [![GitHub stars](https://img.shields.io/github/stars/luhnox/Discord-Self-Bot-Voice?style=social)](https://github.com/luhnox/Discord-Self-Bot-Voice/stargazers)
 [![GitHub forks](https://img.shields.io/github/forks/luhnox/Discord-Self-Bot-Voice?style=social)](https://github.com/luhnox/Discord-Self-Bot-Voice/network/members)
 [![Node.js Version](https://img.shields.io/badge/node-%3E%3D14.0.0-brightgreen)](https://nodejs.org/)
-[![Version](https://img.shields.io/badge/version-3.0.3-blue.svg)](package.json)
+[![Version](https://img.shields.io/badge/version-3.1.0-blue.svg)](package.json)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
 **A powerful Discord self-bot that stays connected to voice channels with command-based control and multi-account support**
@@ -549,12 +549,13 @@ In `./logs/` folder by date: `discord-bot-YYYY-MM-DD.log`
 
 ## 📝 Changelog
 
-### v3.0.3 (Latest - Command Targeting Fix)
-- ✅ **Fix Command Targeting** - Only mentioned user responds to commands (not all users)
-- 🔧 **messageCreate Handler Updated** - Added user ID matching before processing commands
-- 📊 **Cleaner Logs** - No more duplicate responses from other users
+### v3.1.0 (Latest - Settings State Sync)
+- ✅ **Real-Time Settings Sync** - Settings changes immediately apply without restart
+- ✅ **Settings Propagation** - Changed settings properly update in memory
+- 🔧 **onSettingsUpdate Callback** - messageCreate and client sync updated settings
+- 📊 **Complete Command System** - Commands now fully functional with instant config reload
 
-### v3.0.2 (Reconnection Fix)
+### v3.0.3 (Command Targeting Fix)
 - ✅ **Respect Offline Status** - Users with offline status won't auto-join voice (but still receive commands)
 - ✅ **Debug Log Validation** - Only log DEBUG for valid users in database
 - ✅ **Reduced Log Spam** - Silently skip commands from unknown users

@@ -7,7 +7,7 @@ const { handleCommand } = require('../handlers/commands');
  * @param {Object} context - Context with label (userid) and callbacks
  */
 function setupMessageHandler(client, context) {
-    const { label: currentUserId, onCommandAction } = context;
+    const { label: currentUserId, onCommandAction, onSettingsUpdate } = context;
 
     client.on('messageCreate', async (message) => {
         try {
@@ -54,6 +54,14 @@ function setupMessageHandler(client, context) {
                     type: 'channel_change',
                     userId: result.userConfig?.userid,
                     channelId: result.userConfig?.settings.channel_id
+                });
+            }
+
+            // Update settings if changed (for mute, deaf, video toggles, status changes)
+            if (result.userConfig && onSettingsUpdate) {
+                onSettingsUpdate({
+                    settings: result.userConfig.settings,
+                    status: result.userConfig.status
                 });
             }
 
