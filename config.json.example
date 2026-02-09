@@ -1,0 +1,24 @@
+[
+  {
+    "userid": "YOUR_USER_ID_HERE",
+    "token": "YOUR_TOKEN_HERE",
+    "status": "offline",
+    "settings": {
+      "selfMute": false,
+      "selfDeaf": false,
+      "selfVideo": false,
+      "channel_id": "YOUR_CHANNEL_ID_HERE"
+    }
+  },
+  {
+    "userid": "SECOND_USER_ID",
+    "token": "SECOND_TOKEN_HERE",
+    "status": "offline",
+    "settings": {
+      "selfMute": false,
+      "selfDeaf": false,
+      "selfVideo": false,
+      "channel_id": "SECOND_CHANNEL_ID"
+    }
+  }
+]

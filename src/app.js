@@ -8,7 +8,7 @@ const { exec } = require('child_process');
 const fs = require('fs');
 const path = require('path');
 const { log, cleanupOldLogs } = require('./utils/logger');
-const { validateConfig, getTokens } = require('./config/config');
+const { validateDatabase, getAllTokens } = require('./config/database');
 const { startClient } = require('./core/client');
 const { LOG_CLEANUP_INTERVAL_MS } = require('./utils/constants');
 
@@ -66,9 +66,9 @@ async function start() {
         // Check for updates first and enforce version matching
         await checkForUpdates();
 
-        // Validate configuration
-        if (!validateConfig()) {
-            log('ERROR', 'Configuration validation failed. Exiting...');
+        // Validate database
+        if (!validateDatabase()) {
+            log('ERROR', 'Database validation failed. Exiting...');
             process.exit(1);
         }
 
@@ -76,8 +76,13 @@ async function start() {
         cleanupOldLogs();
         setInterval(cleanupOldLogs, LOG_CLEANUP_INTERVAL_MS);
 
-        const tokens = getTokens();
+        const tokens = getAllTokens();
         const clients = [];
+
+        if (tokens.length === 0) {
+            log('ERROR', 'No valid tokens found in config.json');
+            process.exit(1);
+        }
 
         // Handle unhandled promise rejections
         process.on('unhandledRejection', err => {
@@ -104,13 +109,13 @@ async function start() {
         process.on('SIGTERM', gracefulShutdown);
 
         // Start all configured clients
-        tokens.forEach(({ token, label }) => {
-            startClient(token, label)
+        tokens.forEach(({ token, userid, config }) => {
+            startClient(token, userid, config)
                 .then(client => {
                     if (client) clients.push(client);
                 })
                 .catch(err => {
-                    log('ERROR', `[${label}] Failed to start client: ${err}`);
+                    log('ERROR', `[${userid}] Failed to start client: ${err}`);
                 });
         });
     } catch (error) {

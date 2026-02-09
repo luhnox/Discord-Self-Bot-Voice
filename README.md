@@ -4,26 +4,51 @@
 
 [![GitHub stars](https://img.shields.io/github/stars/luhnox/Discord-Self-Bot-Voice?style=social)](https://github.com/luhnox/Discord-Self-Bot-Voice/stargazers)
 [![GitHub forks](https://img.shields.io/github/forks/luhnox/Discord-Self-Bot-Voice?style=social)](https://github.com/luhnox/Discord-Self-Bot-Voice/network/members)
-[![Node.js Version](https://img.shields.io/badge/node-%3E%3D16.0.0-brightgreen)](https://nodejs.org/)
+[![Node.js Version](https://img.shields.io/badge/node-%3E%3D14.0.0-brightgreen)](https://nodejs.org/)
+[![Version](https://img.shields.io/badge/version-3.0.0-blue.svg)](package.json)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
-**A powerful Discord self-bot that stays connected to voice channels with multi-account support**
+**A powerful Discord self-bot that stays connected to voice channels with command-based control and multi-account support**
 
-[Features](#-features) • [Installation](#-installation) • [Configuration](#-configuration) • [Usage](#-usage) • [FAQ](#-faq)
+[What's New](#whats-new-v300) • [Features](#-features) • [Installation](#-installation) • [Commands](#-commands) • [Configuration](#-configuration) • [Usage](#-usage) • [FAQ](#-faq) • [Docs](#-documentation)
 
 </div>
 
 ---
 
-## 📋 Features
+## 🎉 What's New in v3.0.0
+
+### ✨ Major Features
+- **🎮 Command-Based Control** - Control bot via Discord messages!
+- **📝 JSON Config** - No more `.env` needed, single `config.json` file
+- **💬 8+ Commands** - help, settings, set, toggle, and more
+- **🔄 Real-Time Updates** - Changes auto-save to config.json
+- **👥 User-ID Based** - Manage users by Discord ID
+- **⚡ Message Handler** - Listen to Discord messages for commands
+
+### 🆕 New Modules
+- `src/config/database.js` - Database manager for config.json
+- `src/handlers/commands.js` - Command parser and handler
+- `src/events/messageCreate.js` - Message event listener
+
+### 📚 Documentation
+- `COMMANDS.md` - Complete command reference
+- `QUICKSTART.md` - 5-minute setup guide
+- `CONFIG_GUIDE.md` - Configuration details
+- `DOCS_INDEX.md` - Documentation index
+
+---
 
 ### 🎯 Core Features
-- ✅ **Multi-Account Support** - Run up to 2 accounts simultaneously (MAIN + SECOND)
+- ✅ **Command-Based Control** - Control bot via Discord messages (NEW in v3.0.0!)
+- ✅ **Multi-Account Support** - Run multiple accounts simultaneously with independent settings
+- ✅ **Single Config File** - JSON-based config.json (replaces .env)
 - 🔄 **Auto-Reconnect** - Automatically reconnects when disconnected with exponential backoff
 - 🎛️ **Configurable Settings** - Control mute, deafen, and video settings per account
-- 🔀 **Dynamic Channel Switching** - Auto-switch channels when config changes
+- 🔀 **Dynamic Channel Switching** - Auto-switch or manually switch channels via commands
 - 💾 **State Persistence** - Remembers last channel after restart
 - 📝 **Advanced Logging** - Logs to console and file with auto-cleanup
+- 💬 **Discord Message Commands** - Type commands directly in Discord to control bot
 
 ### 🛡️ Stability Features
 - ⚡ **Exponential Backoff** - Smart retry delays (2s → 4s → 8s → 16s → 32s)
@@ -33,17 +58,19 @@
 - 🛑 **Graceful Shutdown** - Clean disconnect on Ctrl+C
 
 ### 📊 Advanced Features
-- 🔍 **Per-Token Configuration** - Separate settings for each account
-- 📍 **Per-Token Channel ID** - Different voice channels for each account
-- 🔔 **Hot Reload** - Apply config changes without restart
+- 🔍 **Per-User Configuration** - Separate settings for each Discord user ID
+- 📍 **Per-User Channel ID** - Different voice channels for each account
+- 🎮 **8+ Discord Commands** - help, settings list, set offline, set online, mute, deaf, video, channel
+- 🔔 **Real-Time Config Updates** - Changes saved instantly to config.json
 - 📂 **Organized Logging** - Daily log files with timestamps
+- 👤 **Flexible Command Format** - Support both `userid command` and `<@userid> command`
 
 ---
 
 ## 🚀 Installation
 
 ### Prerequisites
-- [Node.js](https://nodejs.org/) v16.0.0 or higher
+- [Node.js](https://nodejs.org/) v14.0.0 or higher
 - Discord user token(s)
 - Git (optional)
 
@@ -60,101 +87,178 @@
    npm install
    ```
 
-3. **Configure environment**
+3. **Configure settings**
    ```bash
-   # Copy .env.example to .env (or create new .env)
-   # Add your tokens
+   # Edit config.json with your user ID, token, and channel ID
    ```
 
-4. **Configure settings**
-   ```bash
-   # Edit config.json with your channel IDs and preferences
-   ```
-
-5. **Start the bot**
+4. **Start the bot**
    ```bash
    npm start
    ```
 
+5. **Send commands** in Discord
+   ```
+   YOUR_USER_ID help
+   ```
+
 ---
 
-## ⚙️ Configuration
+## 🎮 Commands
 
-### 📁 File Structure
+### Available Commands (v3.0.0 NEW!)
+
+| Command | Format | Description |
+|---------|--------|-------------|
+| **Help** | `userid help` | Show all available commands |
+| **Settings List** | `userid settings list` | Display user configuration |
+| **Set Offline** | `userid set offline` | Disconnect and set offline |
+| **Set Online** | `userid set online` | Set status to online |
+| **Toggle Mute** | `userid set settings mute` | Toggle self mute |
+| **Toggle Deaf** | `userid set settings deaf` | Toggle self deaf |
+| **Toggle Video** | `userid set settings video` | Toggle self video |
+| **Set Channel** | `userid set channel <id>` | Change voice channel |
+
+### Command Examples
+
 ```
-Discord-Self-Bot-Voice/
-├── src/
-│   └── app.js          # Main application logic
-├── logs/               # Log files (auto-generated)
-├── .env                # Environment variables (tokens)
-├── config.json         # Bot configuration
-├── bot-state.json      # State persistence (auto-generated)
-├── index.js            # Entry point
-└── package.json
+# Get help
+1032472108414017576 help
+
+# Check settings
+1032472108414017576 settings list
+
+# Toggle mute
+1032472108414017576 set settings mute
+
+# Disconnect from voice
+1032472108414017576 set offline
+
+# Set voice channel
+1032472108414017576 set channel 1449039761489788939
+
+# Mention format also works
+<@1032472108414017576> help
 ```
 
-### 🔐 Environment Variables (`.env`)
+### Response Examples
 
-Create a `.env` file in the root directory:
-
-```env
-# Required: At least one token must be provided
-MAIN_TOKEN=your_main_discord_token_here
-SECOND_TOKEN=your_second_discord_token_here
-
-# Optional: Override channel ID from config.json
-CHANNEL_ID=1234567890123456789
-
-# Optional: Log retention in days (default: 7)
-LOG_RETENTION_DAYS=7
+**Help Command:**
+```
+Available Commands:
+`<@userid> set offline` - Set user offline and disconnect from voice
+`<@userid> set online` - Set user online
+`<@userid> settings list` - Show user settings
+`<@userid> set settings mute` - Toggle self mute
+... and more
 ```
 
-#### How to Get Your Discord Token
-⚠️ **Warning:** Never share your token with anyone!
-
-1. Open Discord in your browser
-2. Press `F12` to open Developer Tools
-3. Go to the `Console` tab
-4. Paste: `(webpackChunkdiscord_app.push([[''],{},e=>{m=[];for(let c in e.c)m.push(e.c[c])}]),m).find(m=>m?.exports?.default?.getToken!==void 0).exports.default.getToken()`
-5. Press Enter - your token will appear
-
-### 📝 Bot Configuration (`config.json`)
-
-```json
-{
-    "main": {
-        "selfMute": false,
-        "selfDeaf": false,
-        "selfVideo": false,
-        "CHANNEL_ID": "1234567890123456789"
-    },
-    "second": {
-        "selfMute": true,
-        "selfDeaf": true,
-        "selfVideo": false,
-        "CHANNEL_ID": "9876543210987654321"
-    }
+**Settings List:**
+```
+Settings for 1032472108414017576:
+Status: online
+Settings: {
+    Self Mute: false,
+    Self Deaf: true,
+    Self Video: false,
+    Channel: 1449039761489788939
 }
 ```
 
-#### Configuration Options
+---
 
-| Option | Type | Description | Default |
-|--------|------|-------------|---------|
-| `selfMute` | boolean | Self-mute when joining voice | `false` |
-| `selfDeaf` | boolean | Self-deafen when joining voice | `false` |
-| `selfVideo` | boolean | Enable video when joining voice | `false` |
-| `CHANNEL_ID` | string | Voice channel ID to join | Required |
+---
 
-#### Multi-Account Setup
+## ⚙️ Configuration (v3.0.0)
 
-- **`main`** - Configuration for MAIN_TOKEN
-- **`second`** - Configuration for SECOND_TOKEN
+### 📁 File Structure (Updated)
+```
+Discord-Self-Bot-Voice/
+├── src/
+│   ├── config/
+│   │   ├── database.js         # Config.json manager (NEW)
+│   │   └── config.js
+│   ├── handlers/
+│   │   ├── commands.js         # Command handler (NEW)
+│   │   └── configChange.js
+│   ├── events/
+│   │   ├── messageCreate.js    # Message listener (NEW)
+│   │   ├── ready.js
+│   │   └── voiceStateUpdate.js
+│   └── ...
+├── logs/                        # Log files (auto-generated)
+├── config.json                  # NEW FORMAT! User-based config
+├── config.json.example          # Configuration template
+├── index.js
+└── package.json
+```
 
-Each account can have:
-- Different channel IDs
-- Different voice settings
-- Independent reconnection behavior
+### 🔐 Configuration (v3.0.0 - NEW JSON Format!)
+
+Create/edit `config.json`:
+
+```json
+[
+  {
+    "userid": "1032472108414017576",
+    "token": "YOUR_TOKEN_HERE",
+    "status": "offline",
+    "settings": {
+      "selfMute": false,
+      "selfDeaf": false,
+      "selfVideo": false,
+      "channel_id": "1449039761489788939"
+    }
+  }
+]
+```
+
+### Configuration Fields
+
+| Field | Type | Description | Required |
+|-------|------|-------------|----------|
+| `userid` | string | Discord user ID (18 digits) | ✅ Yes |
+| `token` | string | Discord API token | ✅ Yes |
+| `status` | string | User status (online/offline) | ✅ Yes |
+| `settings.selfMute` | boolean | Auto-mute on join | ⚠️ No |
+| `settings.selfDeaf` | boolean | Auto-deafen on join | ⚠️ No |
+| `settings.selfVideo` | boolean | Auto-enable video | ⚠️ No |
+| `settings.channel_id` | string | Voice channel ID | ⚠️ No |
+
+### How to Get Values
+
+**User ID:** Right-click profile → Copy User ID
+**Token:** Open DevTools (F12) → Console → Copy token from localStorage
+**Channel ID:** Right-click voice channel → Copy Channel ID
+
+### Multi-User Setup
+
+```json
+[
+  {
+    "userid": "1032472108414017576",
+    "token": "TOKEN_1",
+    "status": "offline",
+    "settings": {
+      "selfMute": false,
+      "selfDeaf": false,
+      "selfVideo": false,
+      "channel_id": "1449039761489788939"
+    }
+  },
+  {
+    "userid": "9876543210987654321",
+    "token": "TOKEN_2",
+    "status": "offline",
+    "settings": {
+      "selfMute": true,
+      "selfDeaf": true,
+      "selfVideo": false,
+      "channel_id": "9876543210987654321"
+    }
+  }
+]
+```
 
 ---
 
@@ -170,61 +274,104 @@ npm start
 Press Ctrl+C
 ```
 
-### Single Account
+### Single Account Example
 
-**`.env`:**
-```env
-MAIN_TOKEN=your_token_here
-```
-
-**`config.json`:**
+**config.json:**
 ```json
-{
-    "main": {
-        "selfMute": false,
-        "selfDeaf": false,
-        "selfVideo": false,
-        "CHANNEL_ID": "1234567890123456789"
+[
+  {
+    "userid": "1032472108414017576",
+    "token": "YOUR_TOKEN_HERE",
+    "status": "offline",
+    "settings": {
+      "selfMute": false,
+      "selfDeaf": false,
+      "selfVideo": false,
+      "channel_id": "1449039761489788939"
     }
-}
+  }
+]
 ```
 
-### Multiple Accounts (Simultaneous)
-
-**`.env`:**
-```env
-MAIN_TOKEN=first_account_token
-SECOND_TOKEN=second_account_token
+**Then in Discord:**
+```
+1032472108414017576 help
+1032472108414017576 settings list
+1032472108414017576 set channel 1449039761489788939
+1032472108414017576 set settings mute
+1032472108414017576 set offline
 ```
 
-**`config.json`:**
+### Multiple Accounts Example
+
+**config.json:**
 ```json
-{
-    "main": {
-        "selfMute": false,
-        "selfDeaf": true,
-        "selfVideo": false,
-        "CHANNEL_ID": "1111111111111111111"
-    },
-    "second": {
-        "selfMute": true,
-        "selfDeaf": true,
-        "selfVideo": false,
-        "CHANNEL_ID": "2222222222222222222"
+[
+  {
+    "userid": "1032472108414017576",
+    "token": "TOKEN_ACCOUNT_1",
+    "status": "offline",
+    "settings": {
+      "selfMute": false,
+      "selfDeaf": false,
+      "selfVideo": false,
+      "channel_id": "1111111111111111111"
     }
-}
+  },
+  {
+    "userid": "9876543210987654321",
+    "token": "TOKEN_ACCOUNT_2",
+    "status": "offline",
+    "settings": {
+      "selfMute": true,
+      "selfDeaf": true,
+      "selfVideo": false,
+      "channel_id": "2222222222222222222"
+    }
+  }
+]
 ```
 
-### Hot Reload Configuration
+**Control each account independently:**
+```
+1032472108414017576 help
+9876543210987654321 help
 
-Edit `config.json` while the bot is running to:
-- Change voice settings (mute/deafen/video)
-- Switch to a different channel ID
-- Apply changes without restarting
+1032472108414017576 set offline
+9876543210987654321 set online
+
+1032472108414017576 set settings mute
+9876543210987654321 settings list
+```
+
+### Real-Time Configuration
+
+All changes are **immediately saved** to config.json:
+
+```
+1032472108414017576 set channel 9999999999999999999
+# ✅ Channel saved to config.json instantly!
+
+1032472108414017576 set settings mute
+# ✅ Setting toggled and saved!
+
+1032472108414017576 set offline
+# ✅ Status updated and saved!
+```
 
 ---
 
-## 📊 Logging
+## � Documentation
+
+New comprehensive documentation for v3.0.0:
+
+- **[COMMANDS.md](./COMMANDS.md)** - Complete command reference and examples
+- **[QUICKSTART.md](./QUICKSTART.md)** - 5-minute setup guide ⭐ START HERE
+- **[CONFIG_GUIDE.md](./CONFIG_GUIDE.md)** - Detailed configuration guide
+- **[SETUP_VERIFICATION.md](./SETUP_VERIFICATION.md)** - Setup checklist and verification
+- **[DOCS_INDEX.md](./DOCS_INDEX.md)** - Documentation index and quick links
+
+---
 
 ### Log Files
 
@@ -232,12 +379,11 @@ Logs are automatically saved to `./logs/discord-bot-YYYY-MM-DD.log`
 
 **Example log:**
 ```
-[2026-02-08T10:30:45.123Z] [INFO] Validating configuration...
-[2026-02-08T10:30:45.456Z] [INFO] Configuration validation passed
-[2026-02-08T10:30:46.789Z] [INFO] [MAIN] luhnox is ready!
-[2026-02-08T10:30:47.012Z] [INFO] [MAIN] Successfully joined channel: General Voice (ID: 1234567890123456789)
-[2026-02-08T10:30:47.234Z] [INFO] [SECOND] luhnox2 is ready!
-[2026-02-08T10:30:47.456Z] [INFO] [SECOND] Successfully joined channel: AFK Channel (ID: 9876543210987654321)
+[2026-02-10T10:30:45.123Z] [INFO] Validating database...
+[2026-02-10T10:30:45.456Z] [INFO] Database validation passed
+[2026-02-10T10:30:46.789Z] [INFO] [1032472108414017576] username is ready!
+[2026-02-10T10:30:47.012Z] [INFO] [1032472108414017576] Joined voice channel — staying connected
+[2026-02-10T10:30:50.234Z] [DEBUG] Command: userId=1032472108414017576, cmd=help, args=
 ```
 
 ### Log Levels
@@ -250,12 +396,7 @@ Logs are automatically saved to `./logs/discord-bot-YYYY-MM-DD.log`
 
 ### Log Retention
 
-Logs older than `LOG_RETENTION_DAYS` are automatically deleted.
-
-**Set retention:**
-```env
-LOG_RETENTION_DAYS=7  # Keep logs for 7 days
-```
+Logs older than `LOG_RETENTION_DAYS` are automatically deleted (default: 7 days).
 
 **Monitor logs in real-time:**
 ```bash
@@ -280,25 +421,39 @@ When disconnected, the bot will:
 
 **Example log:**
 ```
-[WARN] [MAIN] Detected instant leave from voice (attempt 1/5) — attempting to reconnect...
-[INFO] [MAIN] Waiting 2045ms before reconnect attempt...
-[INFO] [MAIN] Successfully joined channel: General Voice (ID: 1234567890123456789)
+[WARN] [1032472108414017576] Detected instant leave from voice (attempt 1/5) — attempting to reconnect...
+[INFO] [1032472108414017576] Waiting 2045ms before reconnect attempt...
+[INFO] [1032472108414017576] Successfully joined channel
 ```
 
 ### State Persistence
 
-The bot remembers the last channel for each account in `bot-state.json`:
+The bot remembers the last channel for each user in `bot-state.json`:
 
 ```json
 {
   "lastChannelId": {
-    "MAIN": "1234567890123456789",
-    "SECOND": "9876543210987654321"
+    "1032472108414017576": "1449039761489788939",
+    "9876543210987654321": "9876543210987654321"
   }
 }
 ```
 
 After restart, bots auto-join their last channels.
+
+### Command-Based Control (NEW in v3.0.0!)
+
+Control bot behavior directly from Discord messages:
+- No config file editing needed
+- Real-time updates
+- Flexible command format
+- User-friendly responses
+
+**Example:**
+```
+1032472108414017576 set settings mute
+# ✅ Mute toggled and saved instantly!
+```
 
 ### Graceful Shutdown
 
@@ -312,36 +467,41 @@ Press `Ctrl+C` to trigger graceful shutdown:
 
 ## 📖 FAQ
 
-### ❓ How many accounts can run simultaneously?
-Currently supports 2 accounts (MAIN_TOKEN + SECOND_TOKEN). Both join voice at the same time.
+### ❓ How do I use commands?
+Send messages in Discord with format: `userid command`
 
-### ❓ Can each account join different channels?
-Yes! Configure different `CHANNEL_ID` in `config.json` for `main` and `second`.
+Example:
+```
+1032472108414017576 help
+```
 
-### ❓ What happens if the bot disconnects?
-Auto-reconnect kicks in with exponential backoff. Max 5 attempts before stopping.
+### ❓ How many accounts can run?
+You can run unlimited accounts! Just add more entries to config.json array.
 
-### ❓ How do I switch channels without restarting?
-Edit `CHANNEL_ID` in `config.json`. The bot will detect the change and switch automatically.
+### ❓ Do I need .env anymore?
+No! v3.0.0 uses config.json. .env is optional (legacy support).
 
-### ❓ Where are the logs stored?
-In `./logs/` folder. Files are named by date: `discord-bot-YYYY-MM-DD.log`
+### ❓ Can accounts use different channels?
+Yes! Each user in config.json has independent `channel_id` setting.
 
-### ❓ How do I clean old logs?
-Automatic! Logs older than `LOG_RETENTION_DAYS` (default 7) are deleted daily.
+### ❓ How do I change settings?
+Use commands in Discord:
+```
+userid set settings mute        # Toggle mute
+userid set channel 123456       # Set channel
+userid set offline              # Disconnect
+```
+
+Or edit config.json directly (will auto-load).
+
+### ❓ What happens on disconnect?
+Auto-reconnect with exponential backoff (max 5 attempts).
+
+### ❓ Where are logs?
+In `./logs/` folder by date: `discord-bot-YYYY-MM-DD.log`
 
 ### ❓ Is using self-bots against Discord ToS?
 ⚠️ **Yes.** Use at your own risk. Self-botting can result in account termination.
-
-### ❓ Bot says "Voice channel not found"
-- Verify `CHANNEL_ID` is correct
-- Ensure the account has access to the channel
-- Check if it's a voice/stage channel (not text)
-
-### ❓ How do I get channel ID?
-1. Enable Developer Mode in Discord (Settings → Advanced)
-2. Right-click the voice channel
-3. Click "Copy ID"
 
 ---
 
@@ -350,31 +510,59 @@ Automatic! Logs older than `LOG_RETENTION_DAYS` (default 7) are deleted daily.
 ### Common Issues
 
 #### ❌ "No tokens found"
-**Solution:** Add `MAIN_TOKEN` and/or `SECOND_TOKEN` to `.env`
+**Solution:** Add tokens to config.json, ensure field name is `token`
 
-#### ❌ "CHANNEL_ID not found"
-**Solution:** Add `CHANNEL_ID` to config.json or .env
+#### ❌ "User not found in configuration"
+**Solution:** Check userid in config.json matches the one you're using in commands
 
-#### ❌ "Voice channel not found (invalid ID or not cached)"
+#### ❌ "Voice channel not found"
 **Solutions:**
-- Verify channel ID is correct
+- Verify channel ID is correct (18 digits)
 - Ensure account can access the channel
-- Bot must be in the same server as the channel
+- Make sure it's a voice/stage channel (not text)
 
-#### ❌ Bot disconnects immediately
+#### ❌ Bot doesn't respond to commands
 **Solutions:**
-- Check if you have permissions in the channel
-- Verify token is valid and not expired
-- Check Discord server status
+- Check message format: `userid command`
+- Verify userid in config.json
+- Ensure bot can see messages in channel
+- Check logs for error messages
+
+#### ❌ Config not saving
+**Solutions:**
+- Check file permissions
+- Verify JSON syntax is valid
+- Check disk space
+- Try restart bot
 
 #### ⚠️ "Voice connection timeout"
 **Normal behavior** - Bot will retry with exponential backoff
+
+#### ❌ Bot crashes
+**Solutions:**
+- Check Node.js version (v14+)
+- Check dependencies: `npm list`
+- Review logs in `./logs/`
+- Try: `npm install` again
 
 ---
 
 ## 📝 Changelog
 
-### v2.0.0 (Latest)
+### v3.0.0 ⭐ (Latest - Major Update!)
+- ✨ **Command-Based Control** - Control bot via Discord messages!
+- ✨ **JSON Config System** - Replaced .env with config.json
+- ✨ **8+ Commands** - help, settings, set, toggle, and more
+- ✨ **Real-Time Updates** - Changes auto-save to config.json
+- ✨ **User-ID Based Management** - Manage users by Discord ID
+- ✨ **Message Event Handler** - Listen to Discord messages
+- ✨ **Database Module** - Robust config.json manager
+- ✨ **Command Parser** - Smart command parsing and validation
+- ✨ **Comprehensive Docs** - 4 new documentation files
+- ✨ **Testing Utility** - Command testing script
+- 🔄 **Backward Compatible** - .env still supported (legacy)
+
+### v2.0.0
 - ✨ Multi-account support (MAIN + SECOND)
 - ✨ Per-token configuration
 - ✨ Auto log cleanup
