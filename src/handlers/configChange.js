@@ -1,8 +1,8 @@
 const { log } = require('../utils/logger');
 const { sleep } = require('../utils/helpers');
-const { loadConfig, resolveConfigForLabel } = require('../config/config');
 const { saveLastChannelId } = require('../config/state');
 const { joinChannelWithRetries } = require('../core/voice');
+const { findUserConfig } = require('../config/database');
 const { VOICE_CHANNEL_TYPES, CHANNEL_SWITCH_DELAY_MS } = require('../utils/constants');
 
 /**
@@ -24,10 +24,16 @@ async function handleConfigChange(params) {
     try {
         const oldSettings = { ...currentSettings };
         const oldChannelId = CHANNEL_ID;
-        const newConfig = loadConfig();
-        const resolved = resolveConfigForLabel(label);
-        const newSettings = resolved.settings;
-        const newChannelId = resolved.channelId || oldChannelId;
+        
+        // Get fresh user config from database
+        const userConfig = findUserConfig(label);
+        if (!userConfig) {
+            log('ERROR', `[${label}] User not found in database during config reload`);
+            return;
+        }
+
+        const newSettings = userConfig.settings;
+        const newChannelId = userConfig.settings.channel_id || oldChannelId;
 
         const settingsChanged =
             oldSettings.selfMute !== newSettings.selfMute ||
