@@ -5,7 +5,7 @@
 [![GitHub stars](https://img.shields.io/github/stars/luhnox/Discord-Self-Bot-Voice?style=social)](https://github.com/luhnox/Discord-Self-Bot-Voice/stargazers)
 [![GitHub forks](https://img.shields.io/github/forks/luhnox/Discord-Self-Bot-Voice?style=social)](https://github.com/luhnox/Discord-Self-Bot-Voice/network/members)
 [![Node.js Version](https://img.shields.io/badge/node-%3E%3D14.0.0-brightgreen)](https://nodejs.org/)
-[![Version](https://img.shields.io/badge/version-3.0.1-blue.svg)](package.json)
+[![Version](https://img.shields.io/badge/version-3.0.2-blue.svg)](package.json)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
 **A powerful Discord self-bot that stays connected to voice channels with command-based control and multi-account support**
@@ -549,7 +549,12 @@ In `./logs/` folder by date: `discord-bot-YYYY-MM-DD.log`
 
 ## 📝 Changelog
 
-### v3.0.1 (Latest - Bug Fixes)
+### v3.0.2 (Latest - Reconnection Fix)
+- ✅ **Respect Offline Status on Reconnect** - Offline users won't auto-reconnect after voice disconnect
+- 🔧 **voiceStateUpdate Handler Updated** - Added offline status check before reconnect attempts
+- 📊 **Complete Offline Support** - Offline status now fully respected (join + reconnect)
+
+### v3.0.1 (Bug Fixes)
 - ✅ **Respect Offline Status** - Users with offline status won't auto-join voice (but still receive commands)
 - ✅ **Debug Log Validation** - Only log DEBUG for valid users in database
 - ✅ **Reduced Log Spam** - Silently skip commands from unknown users

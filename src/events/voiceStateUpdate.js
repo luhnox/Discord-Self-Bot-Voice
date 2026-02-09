@@ -2,6 +2,7 @@ const { log } = require('../utils/logger');
 const { sleep, getExponentialBackoffDelay } = require('../utils/helpers');
 const { joinChannelWithRetries } = require('../core/voice');
 const { MAX_RECONNECT_ATTEMPTS } = require('../utils/constants');
+const { findUserConfig } = require('../config/database');
 
 /**
  * Setup voice state update event handler for Discord client
@@ -36,6 +37,14 @@ function setupVoiceStateUpdateHandler(client, context) {
                 newState.channelId === CHANNEL_ID;
 
             if (left && !nowIn) {
+                // Check if user is offline - if so, don't reconnect
+                const userConfig = findUserConfig(label);
+                if (userConfig && userConfig.status === 'offline') {
+                    log('INFO', `[${label}] User status is offline. Skipping voice reconnect.`);
+                    onReconnectAttemptUpdate(0); // Reset counter
+                    return;
+                }
+
                 const newAttempts = reconnectAttempts + 1;
                 onReconnectAttemptUpdate(newAttempts);
                 
